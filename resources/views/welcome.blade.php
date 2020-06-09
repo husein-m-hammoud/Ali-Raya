@@ -1,23 +1,71 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <title>Telaxess</title>
 
         <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,600"
+            rel="stylesheet"
+        />
 
         <!-- Styles -->
         <style>
-            html, body {
+            html,
+            body {
                 background-color: #fff;
                 color: #636b6f;
-                font-family: 'Nunito', sans-serif;
+                font-family: "Nunito", sans-serif;
                 font-weight: 200;
                 height: 100vh;
                 margin: 0;
+            }
+            .backgroundTelax {
+                /* opacity: 0.4; */
+                /* background-image: url("./Images/background.png"); */
+                background-size: cover;
+                background-image: url("/Images/background.png");
+                background-position: cover;
+                background-repeat: repeat;
+
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+                animation-duration: 600s;
+                animation-name: horizontalAnimatedBackground;
+                bottom: 0;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+            }
+            @-webkit-keyframes horizontalAnimatedBackground {
+                0% {
+                    background-position: 0 50%;
+                }
+                100% {
+                    background-position: 9000px 50%;
+                }
+            }
+
+            @-moz-keyframes horizontalAnimatedBackground {
+                0% {
+                    background-position: 0 50%;
+                }
+                100% {
+                    background-position: 9000px 50%;
+                }
+            }
+
+            @keyframes horizontalAnimatedBackground {
+                0% {
+                    background-position: 0 50%;
+                }
+                100% {
+                    background-position: 9000px 50%;
+                }
             }
 
             .full-height {
@@ -42,6 +90,7 @@
 
             .content {
                 text-align: center;
+                position: relative;
             }
 
             .title {
@@ -53,7 +102,7 @@
                 padding: 0 25px;
                 font-size: 13px;
                 font-weight: 600;
-                letter-spacing: .1rem;
+                letter-spacing: 0.1rem;
                 text-decoration: none;
                 text-transform: uppercase;
             }
@@ -61,30 +110,47 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+            *,
+            :after,
+            :before {
+                box-sizing: border-box;
+            }
         </style>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
+            <div class="top-right links">
+                @auth
+                <a href="{{ url('/home') }}">Home</a>
+                @else
+                <a href="{{ route('login') }}">Login</a>
 
-                        <!-- @if (Route::has('register'))
+                <!-- @if (Route::has('register'))
                             <a href="{{ route('register') }}">Register</a>
                         @endif -->
-                    @endauth
-                </div>
+                @endauth
+            </div>
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                Telaxess
+                <div
+                    class="backgroundTelax btx-background--horizontal-scroll btx-background-inner"
+                >
+                    <div
+                        class="  "
+                        style="position: relative;top: 40%; margin-left: 70px; margin-right: 70px;"
+                    >
+                        <img
+                            src="{{ asset('Images/logo (1).png') }}"
+                            class="container"
+                            style="display: block;
+                            margin: 0 auto;
+                            max-width: 100%;
+                            height: auto;"
+                        />
+                    </div>
                 </div>
-
-
             </div>
         </div>
     </body>

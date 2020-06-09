@@ -8,6 +8,51 @@ body {
     background: #fafafa;
 }
 
+.backgroundTelax {
+    /* opacity: 0.4; */
+    /* background-image: url("./Images/background.png"); */
+    background-size: cover;
+    background-image: url("/Images/background.png");
+    background-position: cover;
+    background-repeat: repeat;
+
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-duration: 600s;
+    animation-name: horizontalAnimatedBackground;
+    bottom: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+@-webkit-keyframes horizontalAnimatedBackground {
+    0% {
+        background-position: 0 50%;
+    }
+    100% {
+        background-position: 9000px 50%;
+    }
+}
+
+@-moz-keyframes horizontalAnimatedBackground {
+    0% {
+        background-position: 0 50%;
+    }
+    100% {
+        background-position: 9000px 50%;
+    }
+}
+
+@keyframes horizontalAnimatedBackground {
+    0% {
+        background-position: 0 50%;
+    }
+    100% {
+        background-position: 9000px 50%;
+    }
+}
+
 p {
     font-family: "Poppins", sans-serif;
     font-size: 1.1em;
