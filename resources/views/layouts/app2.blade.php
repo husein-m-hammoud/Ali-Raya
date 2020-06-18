@@ -8,6 +8,8 @@
 
     <title>Collapsible sidebar using Bootstrap 4</title>
     <link href="{{ asset('css/mycss.css') }}" rel="stylesheet">
+    <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
+
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <!-- Our Custom CSS -->
@@ -20,7 +22,6 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 
 </head>
-
 <body>
 
     <div class="wrapper">
@@ -38,7 +39,7 @@
 
                 <li>
                     <a  href="{{ route('Audio') }}">Audio</a>
-                    <a href="#">About</a>
+                    <a href="{{ route('AudioCutter') }}">About</a>
 
                 </li>
                 <li>
@@ -57,9 +58,10 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
                 <div class="container-fluid">
 
-                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <button type="button" id="sidebarCollapse" class="btn btn-infoo">
                         <i class="fas fa-align-left"></i>
-                        <span>Toggle Sidebar</span>
+                        <img src="{{ asset('Images/logo (1).png') }}" alt="logo" style="width:100px;height: 20px">
+
                     </button>
 
 
@@ -67,7 +69,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" style="display: ">
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
@@ -92,6 +94,7 @@
                                         {{ __('Logout') }}
                                     </a>
 
+
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
@@ -104,11 +107,12 @@
             </nav>
 
 
-            @yield('content')
+        <div class="container"> @yield('content')</div>
         </div>
+
     </div>
 
-    <div class="overlay"></div>
+    <div class=""></div>
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

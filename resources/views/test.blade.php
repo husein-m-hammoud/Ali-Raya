@@ -1,129 +1,179 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Live input record and playback</title>
+        <style type='text/css'>
+            ul {
+                list-style: none;
+            }
 
-        <title>Collapsible sidebar using Bootstrap 4</title>
-        <link href="{{ asset('css/mycss.css') }}" rel="stylesheet" />
-        <!-- <link href="{{ asset('css/test.css') }}" rel="stylesheet" /> -->
-        <!-- Bootstrap CSS CDN -->
-
-        <!-- Scrollbar Custom CSS -->
-
-
-        <!-- Font Awesome JS -->
-
-        <script src="https://unpkg.com/wavesurfer.js"></script>
+            #recordingslist audio {
+                display: block;
+                margin-bottom: 10px;
+            }
+        </style>
     </head>
-<style>
-.play{display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 60px;
-  height: 60px;
-  background: #EFEFEF;
-  border-radius: 50%;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding-bottom: 3px;
-    }
-  .play:hover {
-    background: #DDD;
-  }
-</style>
-    <body>
-        <!-- <canvas id="canvas"></canvas> -->
-        <div id="waveform"></div>
+<body>
+    <h1>Recorder.js export example</h1>
 
-        <div class="play" id="btn-play" value="PLay" disabled="disabled" />Play</div>
-        <input type="button" id="btn-pause" value="Pause" disabled="disabled" />
+    <p>Make sure you are using a recent version of Google Chrome.</p>
+    <p>Also before you enable microphone input either plug in headphones or turn the volume down if you want to avoid ear splitting
+        feedback!
+    </p>
 
-        <input type="button" id="btn-stop" value="stop" disabled="disabled" />
+    <!-- Draw the action buttons -->
+    <button id="start-btn">Start recording</button>
+    <button id="stop-btn" disabled>Stop recording</button>
 
-        <audio id="track"  />
+    <!-- List item to store the recording files so they can be played in the browser -->
+    <h2>Stored Recordings</h2>
+    <ul id="recordingslist"></ul>
 
-    </body>
     <script>
-        var button = {
-            play: document.getElementById("btn-play"),
-            pause: document.getElementById("btn-pause"),
-            stop: document.getElementById("btn-stop")
+        // Expose globally your audio_context, the recorder instance and audio_stream
+        var audio_context;
+        var recorder;
+        var audio_stream;
+
+        /**
+         * Patch the APIs for every browser that supports them and check
+         * if getUserMedia is supported on the browser.
+         *
+         */
+        function Initialize() {
+            try {
+                // Monkeypatch for AudioContext, getUserMedia and URL
+                window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+                window.URL = window.URL || window.webkitURL;
+
+                // Store the instance of AudioContext globally
+                audio_context = new AudioContext;
+                console.log('Audio context is ready !');
+                console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+            } catch (e) {
+                alert('No web audio support in this browser!');
+            }
+        }
+
+        /**
+         * Starts the recording process by requesting the access to the microphone.
+         * Then, if granted proceed to initialize the library and store the stream.
+         *
+         * It only stops when the method stopRecording is triggered.
+         */
+        function startRecording() {
+            // Access the Microphone using the navigator.getUserMedia method to obtain a stream
+            navigator.getUserMedia({ audio: true }, function (stream) {
+                // Expose the stream to be accessible globally
+                audio_stream = stream;
+                // Create the MediaStreamSource for the Recorder library
+                var input = audio_context.createMediaStreamSource(stream);
+                console.log('Media stream succesfully created');
+
+                // Initialize the Recorder Library
+                recorder = new Recorder(input);
+                console.log('Recorder initialised');
+
+                // Start recording !
+                recorder && recorder.record();
+                console.log('Recording...');
+
+                // Disable Record button and enable stop button !
+                document.getElementById("start-btn").disabled = true;
+                document.getElementById("stop-btn").disabled = false;
+            }, function (e) {
+                console.error('No live audio input: ' + e);
+            });
+        }
+
+        /**
+         * Stops the recording process. The method expects a callback as first
+         * argument (function) executed once the AudioBlob is generated and it
+         * receives the same Blob as first argument. The second argument is
+         * optional and specifies the format to export the blob either wav or mp3
+         */
+        function stopRecording(callback, AudioFormat) {
+            // Stop the recorder instance
+            recorder && recorder.stop();
+            console.log('Stopped recording.');
+
+            // Stop the getUserMedia Audio Stream !
+            audio_stream.getAudioTracks()[0].stop();
+
+            // Disable Stop button and enable Record button !
+            document.getElementById("start-btn").disabled = false;
+            document.getElementById("stop-btn").disabled = true;
+
+            // Use the Recorder Library to export the recorder Audio as a .wav file
+            // The callback providen in the stop recording method receives the blob
+            if(typeof(callback) == "function"){
+
+                /**
+                 * Export the AudioBLOB using the exportWAV method.
+                 * Note that this method exports too with mp3 if
+                 * you provide the second argument of the function
+                 */
+                recorder && recorder.exportWAV(function (blob) {
+                    callback(blob);
+
+                    // create WAV download link using audio data blob
+                    // createDownloadLink();
+
+                    // Clear the Recorder to start again !
+                    recorder.clear();
+                }, (AudioFormat || "audio/wav"));
+            }
+        }
+
+        // Initialize everything once the window loads
+        window.onload = function(){
+            // Prepare and check if requirements are filled
+            Initialize();
+
+            // Handle on start recording button
+            document.getElementById("start-btn").addEventListener("click", function(){
+                startRecording();
+            }, false);
+
+            // Handle on stop recording button
+            document.getElementById("stop-btn").addEventListener("click", function(){
+                // Use wav format
+                var _AudioFormat = "audio/wav";
+                // You can use mp3 to using the correct mimetype
+                //var AudioFormat = "audio/mpeg";
+
+                stopRecording(function(AudioBLOB){
+                    // Note:
+                    // Use the AudioBLOB for whatever you need, to download
+                    // directly in the browser, to upload to the server, you name it !
+
+                    // In this case we are going to add an Audio item to the list so you
+                    // can play every stored Audio
+                    var url = URL.createObjectURL(AudioBLOB);
+                    var li = document.createElement('li');
+                    var au = document.createElement('audio');
+                    var hf = document.createElement('a');
+
+                    au.controls = true;
+                    au.src = url;
+                    hf.href = url;
+                    // Important:
+                    // Change the format of the file according to the mimetype
+                    // e.g for audio/wav the extension is .wav
+                    //     for audio/mpeg (mp3) the extension is .mp3
+                    hf.download = new Date().toISOString() + '.wav';
+                    hf.innerHTML = hf.download;
+                    li.appendChild(au);
+                    li.appendChild(hf);
+                    recordingslist.appendChild(li);
+                }, _AudioFormat);
+            }, false);
         };
-        button.play.addEventListener(
-            "click",
-            function() {
-                wavesurfer.play();
-                button.stop.disabled = false;
-                button.pause.disabled = false;
-                button.play.disabled = true;
-            },
-            false
-        );
-        button.pause.addEventListener(
-            "click",
-            function() {
-                wavesurfer.pause();
-                button.stop.disabled = false;
-                button.pause.disabled = true;
-                button.play.disabled = false;
-            },
-            false
-        );
-        button.stop.addEventListener(
-            "click",
-            function() {
-                wavesurfer.stop();
-                button.stop.disabled = true;
-                button.pause.disabled = false;
-                button.play.disabled = false;
-            },
-            false
-        );
-        var wavesurfer = WaveSurfer.create({
-            // container: "#waveform",
-
-            // progressColor: "#03a9f4",
-            // scrollParent: true,
-
-            barWidth: 3,
-            cursorWidth: 1,
-            container: "#waveform",
-            backend: "WebAudio",
-            height: 80,
-            progressColor: "#2D5BFF",
-            responsive: true,
-            waveColor: "#EFEFEF",
-            cursorColor: "transparent"
-        });
-        wavesurfer.on("ready", function() {
-            button.play.disabled = false;
-        });
-
-        // window.addEventListener(
-        //     "resize",
-        //     function() {
-        //         wavesurfer.pause();
-        //         var currentProgress =
-        //             wavesurfer.getCurrentTime() / wavesurfer.getDuration();
-        //         // wavesurfer.empty();
-        //         // wavesurfer.drawBuffer();
-
-        //         wavesurfer.drawer.containerWidth =
-        //             wavesurfer.drawer.container.clientWidth;
-        //         wavesurfer.drawBuffer();
-        //         wavesurfer.seekTo(currentProgress);
-
-        //         button.stop.disabled = false;
-        //         button.pause.disabled = true;
-        //         button.play.disabled = false;
-        //     },
-        //     false
-        // );
-        const track = document.querySelector('#track');
-
-        wavesurfer.load("web.mp3");
     </script>
+
+    <!-- Include the recorder.js library from a local copy -->
+    <script src="js/recorderr.js"></script>
+</body>
 </html>

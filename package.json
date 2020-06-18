@@ -10,17 +10,31 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
+        "@babel/plugin-proposal-class-properties": "^7.10.1",
+        "@babel/preset-env": "^7.10.2",
+        "@babel/preset-react": "^7.10.1",
         "axios": "^0.19",
         "bootstrap": "^4.0.0",
         "cross-env": "^7.0",
+        "css-loader": "^3.5.3",
         "jquery": "^3.2",
         "laravel-mix": "^5.0.1",
+        "less": "^3.11.3",
+        "less-loader": "^6.1.0",
         "lodash": "^4.17.13",
         "popper.js": "^1.12",
+        "react": "^16.2.0",
+        "react-dom": "^16.2.0",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.20.1",
         "sass-loader": "^8.0.0",
-        "vue": "^2.5.17",
-        "vue-template-compiler": "^2.6.10"
-    }
+        "style-loader": "^1.2.1"
+    },
+    "dependencies": {
+        "@mohayonao/web-audio-api-shim": "^0.3.0",
+        "classnames": "^2.2.6",
+        "fs": "0.0.1-security",
+        "mp3-cutter": "^1.0.6"
+    },
+    "type": "module"
 }

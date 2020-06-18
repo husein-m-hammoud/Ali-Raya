@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div class="card">
                 <div class="card-header">Dashboard</div>
 
@@ -14,8 +14,13 @@
                         </div>
                     @endif
 
-                    You are logged in!
+
+                    <a href="{{ route('AdminRegister') }}" class="btn btn-primary">
+                        Add USer
+
+                    </a>
                 </div>
+
             </div>
         </div>
     </div>

@@ -19,6 +19,10 @@ Route::get('/', function () {
 Route::get('/test', function () {
     return view('test');
 });
+
+Route::get('/test1', function () {
+    return view('test1');
+});
 Route::get('/test2', function () {
     return view('test2');
 });
@@ -29,7 +33,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('AdminRegister',function()
 {
     return view("AdminRegister");
-});
+} )->name('AdminRegister');
 
 Route::get('/register', 'HomeController@register')->name('register');
 Route::get('/register_aliraya', 'HomeController@registerId');
@@ -38,3 +42,6 @@ Route::get('Audio',function()
     return view("Audio");
 })->name('Audio');
 
+Route::get('/AudioCutter', 'AudioController@AudioCutter')->name('AudioCutter');
+Route::post('/Addaudio', 'AudioController@store')->name('Addaudio');
+Route::post('/test-php', 'AudioController@test');
