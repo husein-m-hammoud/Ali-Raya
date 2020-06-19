@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Audio;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -14,13 +15,12 @@ class AudioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        //
-    }
-    public function AudioCutter()
-    {
-        return view("AudioCutter");
+        $allAudio = Audio::where('UserID',Auth::user()->id)->get();
+        $authname=Auth::user()->name;
+        return view("test",['allAudio'=>$allAudio,'authname'=>$authname]);
     }
 
     /**
@@ -41,36 +41,28 @@ class AudioController extends Controller
      */
     public function store(Request $request)
     {
-// return $request;
+
 $validator = Validator::make($request->all(), [
-    'file' => 'max:500000',
-    'file' =>'nullable|file|mimes:wav,audio/mpeg,mpga,mp3,aac'
+    'audiofile' => 'max:500000',
+    'audiofile' =>'nullable|file|mimes:wav,audio/mpeg,mpga,mp3,aac',
+    'audioname' => 'required|max:255',
 ]);
-        // $this->Validate($request,[
-        //     'file'=>'max:50000', //50MB
-        //     // 'file' => 'required|mimes:audio/mp3',
-        //     // //
-        //     // 'file' => 'required|mimes:wav',
-        //     //
-        //
-        // ]);
-            // $my_blob= $request['file'];
-            // $destinationPath = 'All_Audio0/'; // upload path
-            // $my_blob->move($destinationPath, 'first');
-            //  file_put_contents("C:\Users\Hussein\Desktop\Ali-Raya\public", $my_blob);
+
+
         $Audio = new Audio();
-        if ($files = $request->file('file'))  {
-            dd($files);
-            $destinationPath = 'All_Audio0/'; // upload path
-            $profileImage = date('YmdHis') . "." . $files->getClientOriginalExtension();
-            // $files->move($destinationPath, $profileImage);
-            Storage::put('audio/'.$destinationPath.'/'.$profileImage, $files);
-            $Audio->audioname= "kill" ;
+        if ($files = $request->file('audiofile'))  {
+
+            $destinationPath = 'All_Audio/'.Auth::user()->name; // upload path
+            $profileImage = date('YmdHis') . "." . 'wav';
+            $files->move($destinationPath, $profileImage);
+            // Storage::put('audio/'.$destinationPath.'/'.$profileImage, $files);
+            $Audio->audiofile= $profileImage ;
          }
-        // $Audio->audioname= $request['file'] ;
-         $Audio->UserId=2;
+
+         $Audio->UserId=Auth::user()->id;
+         $Audio->audioname=$request['audioname'];
          $Audio->save();
-         return view('welcome');
+
     }
 
     /**
@@ -118,7 +110,8 @@ $validator = Validator::make($request->all(), [
         //
     }
     public function test(Request $request)
-    {
+    {  $AudioName=$request['AudioName'];
+
        if( $files = $request->file('file')){
 
 
@@ -126,7 +119,7 @@ $validator = Validator::make($request->all(), [
         // $destinationPath = 'All_Audioaliii/'; // upload path
             //   $profileImage = "hussein" ;
             // $files->move($destinationPath, $profileImage);
-            Storage::put('audio/hussein.mp3', $files);
+            Storage::put('audio/'.$AudioName.'.wav', $files);
     }
     else {return  "koll 5ara ";}
         // $x=file_get_contents("https://homepages.cae.wisc.edu/~ece533/images/airplane.png");

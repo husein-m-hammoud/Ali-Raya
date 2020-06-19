@@ -1,179 +1,205 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Live input record and playback</title>
-        <style type='text/css'>
-            ul {
-                list-style: none;
-            }
 
-            #recordingslist audio {
-                display: block;
-                margin-bottom: 10px;
-            }
-        </style>
-    </head>
-<body>
-    <h1>Recorder.js export example</h1>
+@extends('layouts.app2')
 
-    <p>Make sure you are using a recent version of Google Chrome.</p>
-    <p>Also before you enable microphone input either plug in headphones or turn the volume down if you want to avoid ear splitting
-        feedback!
-    </p>
+@section('content')
 
-    <!-- Draw the action buttons -->
-    <button id="start-btn">Start recording</button>
-    <button id="stop-btn" disabled>Stop recording</button>
+<head>
+<link href="{{ asset('css/Plyr.css') }}" rel="stylesheet">
+<script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script src="https://cdn.plyr.io/3.6.2/plyr.polyfilled.js"></script>
 
-    <!-- List item to store the recording files so they can be played in the browser -->
-    <h2>Stored Recordings</h2>
-    <ul id="recordingslist"></ul>
+<!-- <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" /> -->
 
-    <script>
-        // Expose globally your audio_context, the recorder instance and audio_stream
-        var audio_context;
-        var recorder;
-        var audio_stream;
+<link href="{{ asset('css/audioview.css') }}" rel="stylesheet">
+</head>
 
-        /**
-         * Patch the APIs for every browser that supports them and check
-         * if getUserMedia is supported on the browser.
-         *
-         */
-        function Initialize() {
-            try {
-                // Monkeypatch for AudioContext, getUserMedia and URL
-                window.AudioContext = window.AudioContext || window.webkitAudioContext;
-                navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-                window.URL = window.URL || window.webkitURL;
 
-                // Store the instance of AudioContext globally
-                audio_context = new AudioContext;
-                console.log('Audio context is ready !');
-                console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
-            } catch (e) {
-                alert('No web audio support in this browser!');
-            }
+
+<br>
+<audio controls  id='audio'>
+
+                   <source id ='source' src="{{asset('All_Audio/hussein/20200619093214.wav')}}" type="audio/wav">
+                   <source id ='source' src="{{asset('All_Audio/hussein/20200619093441.wav')}}" type="audio/wav">
+                         Your browser dose not Support the audio Tag
+                     </audio>
+
+
+
+     <div class="container">
+    <div class="column add-bottom">
+        <div id="mainwrap">
+            <div id="nowPlay">
+                <span id="npAction">Paused...</span><span id="npTitle"></span>
+            </div>
+            <div id="audiowrap">
+                <div id="audio0">
+                    <audio id="audio1" preload controls>Your browser does not support HTML5 Audio! 😢</audio>
+                </div>
+                <div id="tracks">
+                    <a id="btnPrev">&vltri;</a><a id="btnNext">&vrtri;</a>
+                </div>
+            </div>
+            <div id="plwrap">
+                <ul id="plList"></ul>
+            </div>
+        </div>
+    </div>
+    <a href="" >
+        <div class="Add ">
+        <img src="/Images/Addaudio.png" alt="ADD" height=50 width=50 >
+        </div>
+
+    </a>
+</div>
+<input id='authname'type="hidden" value="{{$authname}}">
+
+<script>
+// let audio = document.getElementById("div");
+let source = document.getElementById("source");
+var allAudio = <?php echo $allAudio; ?>;
+// console.log(audio.innerHTML);
+var array=[];
+        for(let i=0;i<allAudio.length;i++)
+        {
+
+            let a={"track":i+1,"name":allAudio[i]['audioname'],"duration": "5:01","file":allAudio[i]['audiofile']}
+
+            array.push(a);
         }
+        console.log(array);
+jQuery(function ($) {
+    'use strict'
+    var supportsAudio = !!document.createElement('audio').canPlayType;
+    if (supportsAudio) {
+        // initialize plyr
+        var player = new Plyr('#audio1', {
+            controls: [
+                'restart',
+                'play',
+                'progress',
+                'current-time',
+                'duration',
+                'mute',
+                'volume',
+                'download'
+            ]
+        });
 
-        /**
-         * Starts the recording process by requesting the access to the microphone.
-         * Then, if granted proceed to initialize the library and store the stream.
-         *
-         * It only stops when the method stopRecording is triggered.
-         */
-        function startRecording() {
-            // Access the Microphone using the navigator.getUserMedia method to obtain a stream
-            navigator.getUserMedia({ audio: true }, function (stream) {
-                // Expose the stream to be accessible globally
-                audio_stream = stream;
-                // Create the MediaStreamSource for the Recorder library
-                var input = audio_context.createMediaStreamSource(stream);
-                console.log('Media stream succesfully created');
 
-                // Initialize the Recorder Library
-                recorder = new Recorder(input);
-                console.log('Recorder initialised');
 
-                // Start recording !
-                recorder && recorder.record();
-                console.log('Recording...');
+        var authname =document.getElementById("authname").value;
 
-                // Disable Record button and enable stop button !
-                document.getElementById("start-btn").disabled = true;
-                document.getElementById("stop-btn").disabled = false;
-            }, function (e) {
-                console.error('No live audio input: ' + e);
-            });
-        }
+            console.log(allAudio);
+        // @foreach($allAudio as $allAudioa)
 
-        /**
-         * Stops the recording process. The method expects a callback as first
-         * argument (function) executed once the AudioBlob is generated and it
-         * receives the same Blob as first argument. The second argument is
-         * optional and specifies the format to export the blob either wav or mp3
-         */
-        function stopRecording(callback, AudioFormat) {
-            // Stop the recorder instance
-            recorder && recorder.stop();
-            console.log('Stopped recording.');
+        // {{$allAudioa}}
 
-            // Stop the getUserMedia Audio Stream !
-            audio_stream.getAudioTracks()[0].stop();
+        // @endforeach
 
-            // Disable Stop button and enable Record button !
-            document.getElementById("start-btn").disabled = false;
-            document.getElementById("stop-btn").disabled = true;
 
-            // Use the Recorder Library to export the recorder Audio as a .wav file
-            // The callback providen in the stop recording method receives the blob
-            if(typeof(callback) == "function"){
+        // initialize playlist and controls
+        var index = 0,
+            playing = false,
+            mediaPath = 'https://archive.org/download/mythium/',
+            extension = '',
+            tracks = array,
+            buildPlaylist = $.each(tracks, function(key, value) {
+                var trackNumber = value.track,
+                    trackName = value.name,
+                    trackDuration = value.duration;
+                if (trackNumber.toString().length === 1) {
+                    trackNumber = '0' + trackNumber;
+                }
+                console.log(tracks);
+                $('#plList').append('<li> \
+                    <div class="plItem"> \
+                        <span class="plNum">' + trackNumber + '.</span> \
+                        <span class="plTitle">' + trackName + '</span> \
+                        <span class="plLength">' + trackDuration + '</span> \
+                    </div> \
+                </li>');
+            }),
+            trackCount = tracks.length,
+            npAction = $('#npAction'),
+            npTitle = $('#npTitle'),
+            audio = $('#audio1').on('play', function () {
+                playing = true;
+                npAction.text('Now Playing...');
+            }).on('pause', function () {
+                playing = false;
+                npAction.text('Paused...');
+            }).on('ended', function () {
+                npAction.text('Paused...');
+                if ((index + 1) < trackCount) {
+                    index++;
+                    loadTrack(index);
+                    audio.play();
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadTrack(index);
+                }
+            }).get(0),
+            btnPrev = $('#btnPrev').on('click', function () {
+                if ((index - 1) > -1) {
+                    index--;
+                    loadTrack(index);
+                    if (playing) {
+                        audio.play();
+                    }
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadTrack(index);
+                }
+            }),
+            btnNext = $('#btnNext').on('click', function () {
+                if ((index + 1) < trackCount) {
+                    index++;
+                    loadTrack(index);
+                    if (playing) {
+                        audio.play();
+                    }
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadTrack(index);
+                }
+            }),
+            li = $('#plList li').on('click', function () {
+                var id = parseInt($(this).index());
+                if (id !== index) {
+                    playTrack(id);
+                }
+            }),
+            loadTrack = function (id) {
+                $('.plSel').removeClass('plSel');
+                $('#plList li:eq(' + id + ')').addClass('plSel');
+                npTitle.text(tracks[id].name);
+                index = id;
+                audio.src = 'All_Audio/'+authname+'/'+ tracks[id].file;
+                updateDownload(id, audio.src);
+            },
+            updateDownload = function (id, source) {
+                player.on('loadedmetadata', function () {
+                    $('a[data-plyr="download"]').attr('href', source);
+                });
+            },
+            playTrack = function (id) {
+                loadTrack(id);
+                audio.play();
+            };
+        extension = audio.canPlayType('audio/mpeg') ? '.mp3' : audio.canPlayType('audio/ogg') ? '.ogg' : '';
+        loadTrack(index);
+    } else {
+        // no audio support
+        $('.column').addClass('hidden');
+        var noSupport = $('#audio1').text();
+        $('.container').append('<p class="no-support">' + noSupport + '</p>');
+    }
+});
 
-                /**
-                 * Export the AudioBLOB using the exportWAV method.
-                 * Note that this method exports too with mp3 if
-                 * you provide the second argument of the function
-                 */
-                recorder && recorder.exportWAV(function (blob) {
-                    callback(blob);
+</script>
 
-                    // create WAV download link using audio data blob
-                    // createDownloadLink();
-
-                    // Clear the Recorder to start again !
-                    recorder.clear();
-                }, (AudioFormat || "audio/wav"));
-            }
-        }
-
-        // Initialize everything once the window loads
-        window.onload = function(){
-            // Prepare and check if requirements are filled
-            Initialize();
-
-            // Handle on start recording button
-            document.getElementById("start-btn").addEventListener("click", function(){
-                startRecording();
-            }, false);
-
-            // Handle on stop recording button
-            document.getElementById("stop-btn").addEventListener("click", function(){
-                // Use wav format
-                var _AudioFormat = "audio/wav";
-                // You can use mp3 to using the correct mimetype
-                //var AudioFormat = "audio/mpeg";
-
-                stopRecording(function(AudioBLOB){
-                    // Note:
-                    // Use the AudioBLOB for whatever you need, to download
-                    // directly in the browser, to upload to the server, you name it !
-
-                    // In this case we are going to add an Audio item to the list so you
-                    // can play every stored Audio
-                    var url = URL.createObjectURL(AudioBLOB);
-                    var li = document.createElement('li');
-                    var au = document.createElement('audio');
-                    var hf = document.createElement('a');
-
-                    au.controls = true;
-                    au.src = url;
-                    hf.href = url;
-                    // Important:
-                    // Change the format of the file according to the mimetype
-                    // e.g for audio/wav the extension is .wav
-                    //     for audio/mpeg (mp3) the extension is .mp3
-                    hf.download = new Date().toISOString() + '.wav';
-                    hf.innerHTML = hf.download;
-                    li.appendChild(au);
-                    li.appendChild(hf);
-                    recordingslist.appendChild(li);
-                }, _AudioFormat);
-            }, false);
-        };
-    </script>
-
-    <!-- Include the recorder.js library from a local copy -->
-    <script src="js/recorderr.js"></script>
-</body>
-</html>
+@endsection

@@ -42,6 +42,6 @@ Route::get('Audio',function()
     return view("Audio");
 })->name('Audio');
 
-Route::get('/AudioCutter', 'AudioController@AudioCutter')->name('AudioCutter');
+Route::get('/AudioCutter', 'AudioController@index');
 Route::post('/Addaudio', 'AudioController@store')->name('Addaudio');
 Route::post('/test-php', 'AudioController@test');

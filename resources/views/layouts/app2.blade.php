@@ -39,7 +39,7 @@
 
                 <li>
                     <a  href="{{ route('Audio') }}">Audio</a>
-                    <a href="{{ route('AudioCutter') }}">About</a>
+                    <a href="">About</a>
 
                 </li>
                 <li>

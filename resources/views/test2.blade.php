@@ -6,7 +6,7 @@
 <link href="{{ asset('css/foraudio.css') }}" rel="stylesheet" />
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
-<!-- <script src="//vjs.zencdn.net/7.3.0/video.min.js"></script> -->
+
 <script src="https://unpkg.com/wavesurfer.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
@@ -160,6 +160,17 @@
     </section>
 </div>
 <br><br><br>
+<div id="myModal" class="modal">
+<div class="modal-contentt">
+    <span class="close">&times;</span>
+    <h4>Add Name For Audio</h4>
+    <input type="text" id="AudioName" />
+    <br>
+    <p id='error' >Please enter name of Audio</p>
+
+    <button id="uplod"  class="btn btn-success trim-left" style="margin-top:10px">submit</button>
+  </div>
+</div>
 </body>
 
 
@@ -181,17 +192,20 @@
             let btn_trim = document.getElementById("trim");
             let btn_reload = document.getElementById("reload");
             var file = document.getElementById("fileselect");
-
+            var modal = document.getElementById("myModal");
+            var span = document.getElementsByClassName("close")[0];
+            var btn_upload = document.getElementById("uplod");
+            var  AudioName= document.getElementById("AudioName");
 
             let regions = WaveSurfer.regions.create({
                 regions: [],
-                dragSelection: false,
+                dragSelection: true,
                 slop: 10
             });
 
             let wavesurfer = WaveSurfer.create({
                 container: "#waveform",
-                waveColor: "#46a6d8",
+                waveColor: "#89e100",
                 progressColor: "#FFF",
                 barWidth: 3,
                 barGap: 2,
@@ -204,7 +218,7 @@
                 responsive: 1000,
                 normalize: true,
                 //minimap: true,
-                plugins: [regions]
+                plugins: [regions],
                 //  maxCanvasWidth: 100
             });
 
@@ -223,9 +237,6 @@
             btn_trim.addEventListener("click", async function() {
 
 
-
-
-
                 btn_stop.click();
                 btn_stop.disabled=true;
 
@@ -241,6 +252,82 @@
                     console.log("is bigger than 30");
                     return
                 }
+                const originalBuffer = wavesurfer.backend.buffer;
+
+                var emptySegment = wavesurfer.backend.ac.createBuffer(
+                    originalBuffer.numberOfChannels,
+                    //segment duration
+                    (end - start) * (originalBuffer.sampleRate * 1),
+                    originalBuffer.sampleRate
+                );
+
+                for (var i = 0; i < originalBuffer.numberOfChannels; i++) {
+                    var chanData = originalBuffer.getChannelData(i);
+                    var segmentChanData = emptySegment.getChannelData(i);
+                    for (
+                        var j = 0, len = chanData.length;
+                        j < end * originalBuffer.sampleRate;
+                        j++
+                    ) {
+                        segmentChanData[j] =
+                            chanData[j + start * originalBuffer.sampleRate];
+                    }
+                }
+
+                wavesurfer.loadDecodedBuffer(emptySegment); // Here you go!
+
+
+
+            });
+
+
+            span.onclick = function() {
+            modal.style.display = "none";
+            }
+            window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+            }
+            btn_stop.addEventListener("click", function() {
+
+                console.log(file.files[0]);
+                wavesurfer.stop();
+            });
+            btn_playRegion.addEventListener("click", function() {
+                btn_stop.disabled = false;
+
+
+
+
+                wavesurfer.regions.list[
+                    Object.keys(wavesurfer.regions.list)[0]
+                ].play();
+
+
+            });
+
+            btn_upload.onclick = function() {
+
+            if (AudioName.value==""){
+                document.getElementById("error").style.display = "block";
+            }else{
+                upload();
+            }
+            }
+            btn_download.addEventListener("click", async function() {
+                modal.style.display = "block";
+
+            });
+
+                // I had to fixed to two decimal if I don't do this not work, I don't know whyyy
+            function upload(){
+                const start = wavesurfer.regions.list[
+                    Object.keys(wavesurfer.regions.list)[0]
+                ].start.toFixed(2);
+                const end = wavesurfer.regions.list[
+                    Object.keys(wavesurfer.regions.list)[0]
+                ].end.toFixed(2);
                 const originalBuffer = wavesurfer.backend.buffer;
                 console.log(
                     end,
@@ -269,75 +356,6 @@
                             chanData[j + start * originalBuffer.sampleRate];
                     }
                 }
-
-                wavesurfer.loadDecodedBuffer(emptySegment); // Here you go!
-
-
-
-            });
-
-
-
-            btn_stop.addEventListener("click", function() {
-                console.log(file.files[0]);
-                wavesurfer.stop();
-            });
-            btn_playRegion.addEventListener("click", function() {
-                btn_stop.disabled = false;
-
-
-
-
-                wavesurfer.regions.list[
-                    Object.keys(wavesurfer.regions.list)[0]
-                ].play();
-
-
-            });
-            function FileListItem(a) {
-                a = [].slice.call(Array.isArray(a) ? a : arguments)
-                for (var c, b = c = a.length, d = !0; b-- && d;) d = a[b] instanceof File
-                if (!d) throw new TypeError("expected argument to FileList is File or array of File objects")
-                for (b = (new ClipboardEvent("")).clipboardData || new DataTransfer; c--;) b.items.add(a[c])
-                return b.files
-                }
-
-            btn_download.addEventListener("click", async function() {
-                // I had to fixed to two decimal if I don't do this not work, I don't know whyyy
-                const start = wavesurfer.regions.list[
-                    Object.keys(wavesurfer.regions.list)[0]
-                ].start.toFixed(2);
-                const end = wavesurfer.regions.list[
-                    Object.keys(wavesurfer.regions.list)[0]
-                ].end.toFixed(2);
-                const originalBuffer = wavesurfer.backend.buffer;
-                console.log(
-                    end,
-                    start,
-                    end,
-                    start,
-                    originalBuffer,
-                    (end - start) * (originalBuffer.sampleRate * 1)
-                );
-                var emptySegment = wavesurfer.backend.ac.createBuffer(
-                    originalBuffer.numberOfChannels,
-                    //segment duration
-                    (end - start) * (20000 * 1),
-                    20000
-                );
-
-                for (var i = 0; i < originalBuffer.numberOfChannels; i++) {
-                    var chanData = originalBuffer.getChannelData(i);
-                    var segmentChanData = emptySegment.getChannelData(i);
-                    for (
-                        var j = 0, len = chanData.length;
-                        j < end * 20000;
-                        j++
-                    ) {
-                        segmentChanData[j] =
-                            chanData[j + start * 20000];
-                    }
-                }
                 const type = "wav";
 
                 const { length, duration } = emptySegment;
@@ -353,7 +371,7 @@
                     .catch(e => console.error(e));
 
                 console.log("download-file");
-            });
+            }
             btn_reload.addEventListener("click", function() {
                 var file = document.getElementById("fileselect");
                 var value=document.getElementById("fileselect").Value;
@@ -388,12 +406,13 @@
 
                 var fd =  new FormData();
 
-                fd.append('file', blob);
-            //
+                fd.append('audiofile', blob);
+                fd.append('audioname',AudioName.value)
+
 
                 fd.append("_token", "{{ csrf_token() }}");
 
-               $.ajax({url:"/test-php",
+               $.ajax({url:"/Addaudio",
                     method:"POST",
                     data:fd,
                     dataType:'JSON',
@@ -406,7 +425,7 @@
                 },
                 error : function(request,error)
                 {
-                    // alert("Request: "+JSON.stringify(request));
+                    alert("Request: "+JSON.stringify(request));
                 }
                     });
                 }
