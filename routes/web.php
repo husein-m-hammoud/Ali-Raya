@@ -37,11 +37,11 @@ Route::get('AdminRegister',function()
 
 Route::get('/register', 'HomeController@register')->name('register');
 Route::get('/register_aliraya', 'HomeController@registerId');
-Route::get('Audio',function()
-{
-    return view("Audio");
-})->name('Audio');
+Route::post('/changePassword','HomeController@changePassword')->name('changePassword');
+Route::get('/changePassword','HomeController@showpassword')->name('changePassword');
 
-Route::get('/AudioCutter', 'AudioController@index');
+Route::get('/deleteaudio/{id}', 'AudioController@destroy');
+Route::get('/Audio', 'AudioController@index')->name('Audio');
+Route::get('/AddAudio', 'AudioController@indexAdd');
 Route::post('/Addaudio', 'AudioController@store')->name('Addaudio');
 Route::post('/test-php', 'AudioController@test');

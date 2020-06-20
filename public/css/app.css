@@ -2857,19 +2857,19 @@ fieldset:disabled a.btn {
 .btn-infoo {
     color: #212529;
     background-color: #fff;
-    border-color: #6cb2eb;
+    border-color: #96e51d;
 }
 
 .btn-infoo:hover {
     color: #fff;
-    background-color: #4aa0e6;
+    background-color: #96e51d;
     border-color: #9ae427;
 }
 
 .btn-infoo:focus,
 .btn-infoo.focus {
     color: #fff;
-    background-color: #4aa0e6;
+    background-color: #9ae427;
     border-color: #9ae427;
     box-shadow: 0 0 0 0.2rem rgba(97, 157, 206, 0.5);
 }
@@ -2877,8 +2877,8 @@ fieldset:disabled a.btn {
 .btn-infoo.disabled,
 .btn-infoo:disabled {
     color: #212529;
-    background-color: #6cb2eb;
-    border-color: #6cb2eb;
+    background-color: #9ae427;
+    border-color: #9ae427;
 }
 
 .btn-infoo:not(:disabled):not(.disabled):active,

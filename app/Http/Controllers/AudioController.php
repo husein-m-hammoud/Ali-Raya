@@ -7,6 +7,10 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use DB;
+use File;
+
 
 class AudioController extends Controller
 {
@@ -20,9 +24,11 @@ class AudioController extends Controller
     {
         $allAudio = Audio::where('UserID',Auth::user()->id)->get();
         $authname=Auth::user()->name;
-        return view("test",['allAudio'=>$allAudio,'authname'=>$authname]);
+        return view("Audio",['allAudio'=>$allAudio,'authname'=>$authname]);
     }
-
+    public function indexAdd(){
+            return view("AddAudio");
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -48,7 +54,6 @@ $validator = Validator::make($request->all(), [
     'audioname' => 'required|max:255',
 ]);
 
-
         $Audio = new Audio();
         if ($files = $request->file('audiofile'))  {
 
@@ -58,11 +63,13 @@ $validator = Validator::make($request->all(), [
             // Storage::put('audio/'.$destinationPath.'/'.$profileImage, $files);
             $Audio->audiofile= $profileImage ;
          }
+         $duration=gmdate("i:s", $request['duration']);
 
          $Audio->UserId=Auth::user()->id;
+         $Audio->duration=$duration;
          $Audio->audioname=$request['audioname'];
          $Audio->save();
-
+         return $Audio;
     }
 
     /**
@@ -105,23 +112,37 @@ $validator = Validator::make($request->all(), [
      * @param  \App\Audio  $audio
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Audio $audio)
+    public function destroy($id)
     {
-        //
+        $result = DB::select(DB::raw('select audiofile as file from audio
+where id = '.$id));
+        $file = DB::table('audio')->where('id', $id)->first();
+        $test=$file->audiofile;
+
+        $filename = "All_Audio/".Auth::user()->name."/".$test;
+
+        if(File::exists($filename)) {
+            File::delete($filename);
+        }
+
+        DB::table('audio')->where('id',$id)->delete();
+        return redirect()->route('Audio');
+
     }
     public function test(Request $request)
-    {  $AudioName=$request['AudioName'];
+    {
+    // {  $AudioName=$request['AudioName'];
 
-       if( $files = $request->file('file')){
+    //    if( $files = $request->file('file')){
 
 
         // dd($files);
         // $destinationPath = 'All_Audioaliii/'; // upload path
             //   $profileImage = "hussein" ;
             // $files->move($destinationPath, $profileImage);
-            Storage::put('audio/'.$AudioName.'.wav', $files);
-    }
-    else {return  "koll 5ara ";}
+            // Storage::put('audio/'.$AudioName.'.wav', $files);
+    // }
+    // else {return  "koll 5ara ";}
         // $x=file_get_contents("https://homepages.cae.wisc.edu/~ece533/images/airplane.png");
         // dd($x);
         // $x=shell_exec('sox C:\Users\Hussein\Desktop\hussein.wav  C:\wamp64\www\Ali-Raya\public\alii.wav trim 2 0.195');

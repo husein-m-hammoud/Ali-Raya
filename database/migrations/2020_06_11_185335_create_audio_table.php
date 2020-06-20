@@ -17,6 +17,8 @@ class CreateAudioTable extends Migration
             $table->id();
             $table->string('audioname');
             $table->string('audiofile');
+            $table->string('duration');
+
             $table->Integer('UserId');
             $table->timestamps();
         });
