@@ -79,7 +79,7 @@
                 Start Recording
             </button>
             <button id="stop-btn" disabled class="btn btn-primary" >
-                <i class="glyphicon glyphicon-play"></i>
+            <i class="glyphicon glyphicon-stop"></i>
                 Stop recording
             </button>
             <button class="btn btn-primary" id="playRegion" disabled="true">

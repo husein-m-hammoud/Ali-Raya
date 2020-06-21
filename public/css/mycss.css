@@ -240,3 +240,18 @@ a.article:hover {
     top: 0;
     right: 0;
 }
+.text-ov {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.Add {
+    background-color: #9ae427;
+    border-radius: 50%;
+    height: 75px;
+    width: 75px;
+    padding: 10px;
+    position: fixed;
+    bottom: 10%;
+    right: 10%;
+}

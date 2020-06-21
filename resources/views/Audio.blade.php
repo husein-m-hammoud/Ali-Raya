@@ -46,6 +46,7 @@
     </a>
 </div>
 <input id='authname'type="hidden" value="{{$authname}}">
+<input id='authid'type="hidden" value="{{$authid}}">
 
 <script>
 // let audio = document.getElementById("div");
@@ -81,9 +82,10 @@ jQuery(function ($) {
 
 
 
-        var authname =document.getElementById("authname").value;
+        var authname=document.getElementById("authname").value;
+        var authid=document.getElementById("authid").value;
 
-            console.log(allAudio);
+            console.log(authname);
         // @foreach($allAudio as $allAudioa)
 
         // {{$allAudioa}}
@@ -173,7 +175,7 @@ jQuery(function ($) {
                 $('#plList li:eq(' + id + ')').addClass('plSel');
                 npTitle.text(tracks[id].name);
                 index = id;
-                audio.src = 'All_Audio/'+authname+'/'+ tracks[id].file;
+                audio.src = 'All_Audio/'+authname+"_"+authid+'/'+ tracks[id].file;
                 updateDownload(id, audio.src);
             },
             updateDownload = function (id, source) {

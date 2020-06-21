@@ -24,7 +24,9 @@ class AudioController extends Controller
     {
         $allAudio = Audio::where('UserID',Auth::user()->id)->get();
         $authname=Auth::user()->name;
-        return view("Audio",['allAudio'=>$allAudio,'authname'=>$authname]);
+        $authid=Auth::user()->id;
+
+        return view("Audio",['allAudio'=>$allAudio,'authname'=>$authname,'authid'=>$authid]);
     }
     public function indexAdd(){
             return view("AddAudio");
@@ -57,7 +59,7 @@ $validator = Validator::make($request->all(), [
         $Audio = new Audio();
         if ($files = $request->file('audiofile'))  {
 
-            $destinationPath = 'All_Audio/'.Auth::user()->name; // upload path
+            $destinationPath = 'All_Audio/'.Auth::user()->name."_".Auth::user()->id; // upload path
             $profileImage = date('YmdHis') . "." . 'wav';
             $files->move($destinationPath, $profileImage);
             // Storage::put('audio/'.$destinationPath.'/'.$profileImage, $files);
@@ -114,12 +116,11 @@ $validator = Validator::make($request->all(), [
      */
     public function destroy($id)
     {
-        $result = DB::select(DB::raw('select audiofile as file from audio
-where id = '.$id));
+
         $file = DB::table('audio')->where('id', $id)->first();
         $test=$file->audiofile;
 
-        $filename = "All_Audio/".Auth::user()->name."/".$test;
+        $filename = "All_Audio/".Auth::user()->name."_".Auth::user()->id."/".$test;
 
         if(File::exists($filename)) {
             File::delete($filename);

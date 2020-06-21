@@ -20,11 +20,9 @@ Route::get('/test', function () {
     return view('test');
 });
 
-Route::get('/test1', function () {
-    return view('test1');
-});
+
 Route::get('/test2', function () {
-    return view('test2');
+    return view('Audioo');
 });
 
 Auth::routes();
@@ -39,6 +37,12 @@ Route::get('/register', 'HomeController@register')->name('register');
 Route::get('/register_aliraya', 'HomeController@registerId');
 Route::post('/changePassword','HomeController@changePassword')->name('changePassword');
 Route::get('/changePassword','HomeController@showpassword')->name('changePassword');
+Route::get('/deleteUser/{id}','HomeController@deleteUser');
+Route::get('/editUser/{id}','HomeController@edit');
+Route::post('/update/{id}','HomeController@update');
+Route::get('/reset/{id}','HomeController@rest');
+Route::get('/block/{id}','HomeController@block');
+
 
 Route::get('/deleteaudio/{id}', 'AudioController@destroy');
 Route::get('/Audio', 'AudioController@index')->name('Audio');

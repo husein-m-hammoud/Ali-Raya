@@ -8,12 +8,15 @@ var audio_stream;
  * if getUserMedia is supported on the browser.
  *
  */
+
 function Initialize() {
     try {
         // Monkeypatch for AudioContext, getUserMedia and URL
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         navigator.getUserMedia =
-            navigator.getUserMedia || navigator.webkitGetUserMedia;
+            navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia;
         window.URL = window.URL || window.webkitURL;
 
         // Store the instance of AudioContext globally

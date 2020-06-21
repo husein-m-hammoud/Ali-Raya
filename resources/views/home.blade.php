@@ -15,7 +15,7 @@
                     @endif
 
 
-                    <a href="{{ route('AdminRegister') }}" class="btn btn-primary">
+                    <a  class="btn btn-primary">
                         Add USer
 
                     </a>
