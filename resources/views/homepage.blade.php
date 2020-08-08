@@ -39,7 +39,7 @@
             <div id="example-collapse{{$user->id}}" class="collapse d-lg-block">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a  class="nav-link">
+                        <a   href="/User/{{$user->id}}" class="nav-link">
                             <img src="Images/enter.png" alt="" width="20"
                         /></a>
                     </li>

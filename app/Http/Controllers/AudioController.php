@@ -36,9 +36,15 @@ class AudioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function useraudio($id)
     {
-        //
+        $allAudio = Audio::where('UserID',$id)->get();
+        $user = DB::table('users')->where('id', $id)->first();
+        $authname=$user->name;
+        $authid=$id;
+
+        return  view("Audio",['allAudio'=>$allAudio,'authname'=>$authname,'authid'=>$authid]);
+
     }
 
     /**
@@ -132,35 +138,32 @@ $validator = Validator::make($request->all(), [
     }
     public function test(Request $request)
     {
-    // {  $AudioName=$request['AudioName'];
-
-    //    if( $files = $request->file('file')){
-
-
-        // dd($files);
-        // $destinationPath = 'All_Audioaliii/'; // upload path
-            //   $profileImage = "hussein" ;
-            // $files->move($destinationPath, $profileImage);
-            // Storage::put('audio/'.$AudioName.'.wav', $files);
-    // }
-    // else {return  "koll 5ara ";}
-        // $x=file_get_contents("https://homepages.cae.wisc.edu/~ece533/images/airplane.png");
-        // dd($x);
-        // $x=shell_exec('sox C:\Users\Hussein\Desktop\hussein.wav  C:\wamp64\www\Ali-Raya\public\alii.wav trim 2 0.195');
-        // echo $x,"ss";
-        // $blobInput = $request->file('audio-blob');
-        // $url="Blob {size: 1281461, type: 'audio/mpeg'}";
-        // $url = "blob:http://127.0.0.1:8000/04a222af-69fd-4dc8-9f37-661e443d3f1c";
-        //save the wav file to 'storage/app/audio' path with fileanme test.wav
+        // $myfile = fopen("c:/Users/Hussein/Desktop/test.txt", "w") or die("Unable to open file!");
+        // fwrite($myfile,"hhhhhhh");
+        //     fclose($myfile);
 
 
+            // $fp = fopen("c:/Users/Hussein/Desktop/test.txt", 'a');
+            // fwrite($fp, " this is additional text \r\n");
+            // fwrite($fp, 'appending data');
+            // fclose($fp);
 
+            // $output = str_replace($var ."\r\n", "", $input ."\r\n");
+            $path="c:/Users/Hussein/Desktop/test.txt";
+            $fn = fopen($path,"r");
+            $content = file_get_contents($path);
+            while(! feof($fn))  {
+              $result = fgets($fn);
+              if(strpos($result,'text')){
+                // str_replace($request,"", "" );
+                $content=str_replace($result, '', $content);
+              }
+              echo '<br>'.$result;
 
-        // file_put_contents($img, file_get_contents($url));
-        //  $File->move($img, file_get_contents($url));
-        // $path = 'https://i.stack.imgur.com/koFpQ.png';
-        //     $filename = basename($path);
+            }
 
-        // Image::make($path)->save(public_path('images/' . $filename));
+            fclose($fn);
+            file_put_contents($path, $content);
+
     }
 }

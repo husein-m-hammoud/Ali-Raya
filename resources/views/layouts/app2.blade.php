@@ -9,8 +9,7 @@
     <title>{{ config('app.name', 'Telaxess') }}</title>
     <link href="{{ asset('css/mycss.css') }}" rel="stylesheet">
     <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
-
-    <!-- Bootstrap CSS CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600;700&display=swap" rel="stylesheet">    <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <!-- Our Custom CSS -->
 
@@ -35,7 +34,7 @@
                 <h3>Telaxess</h3>
             </div>
 
-            <ul class="list-unstyled components">
+            <ul class="list-unstyled components p-4">
 
                 <li>
                     <a  href="{{ route('Audio') }}">Audio</a>
@@ -43,10 +42,10 @@
 
                 </li>
                 <li>
-                    <a href="#">Portfolio</a>
+                    <a href="{{ route('profile') }}">Profile</a>
                 </li>
                 <li>
-                    <a href="#">Contact</a>
+                    <a href="{{ route('Extension') }}" >Extension</a>
                 </li>
             </ul>
 

@@ -3,21 +3,27 @@
 @extends('layouts.app2')
 
 @section('content')
-
 <div class="container">
     <div class="row justify-content-center ">
         <div class="col-md-8 col-md-offset-2">
             <div class="card">
-                <div class="card-header">Change password</div>
+                <div class="card-header">Change password
+                <a href="/home" style="float:right">
+                                <button class="btn btn-primary ">
+                                    Close
+                                   <img src="Images/close.png" alt="close" width="20" class="ml-1">
+                                </button>
+                                </a>
+                </div>
 
                 <div class="card-body">
                     @if (session('error'))
-                        <div class="alert alert-danger">
+                        <div id="ms" class="alert alert-danger">
                             {{ session('error') }}
                         </div>
                     @endif
                         @if (session('success'))
-                            <div class="alert alert-success">
+                            <div id="ms" class="alert alert-success">
                                 {{ session('success') }}
                             </div>
                         @endif
@@ -61,11 +67,12 @@
                         </div>
 
                         <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
+                            <div class="col-md-4 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
                                     Change Password
                                 </button>
                             </div>
+
                         </div>
                     </form>
                 </div>
@@ -73,7 +80,14 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 
-
+<script>
+$("document").ready(function(){
+    setTimeout(function(){
+        $("#ms").hide();
+    }, 4000 );
+});
+</script>
 
 @endsection

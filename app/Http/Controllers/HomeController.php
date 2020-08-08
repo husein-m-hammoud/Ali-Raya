@@ -19,7 +19,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-
+        $this->middleware('auth');
     }
 
     /**
@@ -36,7 +36,7 @@ class HomeController extends Controller
 
         return view('homepage',['Users'=>$Users]);
         }
-        return view('UserPage');
+        return redirect()->route("profile");
 
     }
     public function register()
@@ -49,15 +49,17 @@ class HomeController extends Controller
     }
     public function registerId()
     {
-
+        $this->middleware('auth');
 
         return view('auth/register');
 
     }
     public function showpassword(){
+        $this->middleware('auth');
         return view('ChangePassword');
     }
     public function changePassword(Request $request){
+
 
         if (!(Hash::check($request->get('current-password'), Auth::user()->password))) {
             // The passwords matches
@@ -141,6 +143,17 @@ class HomeController extends Controller
         // $user->password = bcrypt($rand);
         // $user->save();
         return redirect()->route("home")->with("success","USer changed successfully !");
+    }
+    public function profile(){
+        $id =Auth::user()->id;
+        $user = DB::table('users')->where('id', $id)->first();
+        $count = DB::table('audio')->where('UserId', $id)->count();
+
+        return view('profile',["user"=>$user ,"count"=>$count] );
+    }
+    public function getuser($id){
+        $user = DB::table('users')->where('id', $id)->first();
+        return view('UserPage',["user"=>$user ]);
     }
 
 }

@@ -42,10 +42,19 @@ Route::get('/editUser/{id}','HomeController@edit');
 Route::post('/update/{id}','HomeController@update');
 Route::get('/reset/{id}','HomeController@rest');
 Route::get('/block/{id}','HomeController@block');
-
+Route::get('/porfile','HomeController@profile')->name('profile');
+Route::get('/Extension',function(){
+    return view('Extension');
+})->name('Extension');
 
 Route::get('/deleteaudio/{id}', 'AudioController@destroy');
 Route::get('/Audio', 'AudioController@index')->name('Audio');
 Route::get('/AddAudio', 'AudioController@indexAdd');
 Route::post('/Addaudio', 'AudioController@store')->name('Addaudio');
-Route::post('/test-php', 'AudioController@test');
+Route::get('/test-php', 'AudioController@test');
+
+Route::get('/User/useraudio/{id}', 'AudioController@useraudio');
+
+
+
+Route::get('User/{id}','HomeController@getuser');
